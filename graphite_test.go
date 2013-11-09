@@ -27,7 +27,7 @@ func TestNewGraphite(t *testing.T) {
 //	if err != nil {
 //		t.Error(err)
 //	}
-//	err = gh.Increment("stats.test.metric11")
+//	err = gh.SimpleSend("stats.test.metric11", "1")
 //	if err != nil {
 //		t.Error(err)
 //	}

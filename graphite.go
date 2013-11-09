@@ -69,9 +69,10 @@ func (graphite *Graphite) SendMetric(metric Metric) {
 	graphite.sendMetric(metric)
 }
 
-// The Increment method increments an arbitrary metric on the remote graphite host
-func (graphite *Graphite) Increment(stat string) error {
-	metric := Metric{Name: stat, Value: "1", Timestamp: time.Now().Unix()}
+// The SimpleSend method can be used to just pass a metric name and value and
+// have it be sent to the Graphite host with the current timestamp
+func (graphite *Graphite) SimpleSend(stat string, value string) error {
+	metric := Metric{Name: stat, Value: value, Timestamp: time.Now().Unix()}
 	err := graphite.sendMetric(metric)
 	if err != nil {
 		return err
