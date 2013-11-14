@@ -55,3 +55,14 @@ func doWork() {
     Graphite.SimpleSend("stats.doing_work", 1)
 }
 ```
+
+## Contributing
+
+Please contribute and help improve this project!
+
+- Fork the repo
+- Make sure the tests pass
+- Improve the code
+- Make sure your feature has test coverage
+- Make sure the tests pass
+- Submit a pull request
