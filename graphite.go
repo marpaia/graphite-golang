@@ -61,12 +61,12 @@ func (graphite *Graphite) Connect() error {
 
 // Given a Metric struct, the SendMetric method sends the supplied metric to the
 // Graphite connection that the method is called upon
-func (graphite *Graphite) SendMetric(metric Metric) {
+func (graphite *Graphite) SendMetric(metric Metric) error {
 	if metric.Timestamp == 0 {
 		metric.Timestamp = time.Now().Unix()
 	}
 
-	graphite.sendMetric(metric)
+	return graphite.sendMetric(metric)
 }
 
 // The SimpleSend method can be used to just pass a metric name and value and
