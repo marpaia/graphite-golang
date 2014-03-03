@@ -46,13 +46,13 @@ func init() {
     }
 
     log.Printf("Loaded Graphite connection: %#v", Graphite)
-    Graphite.SimpleSend("stats.graphite_loaded", 1)
+    Graphite.SimpleSend("stats.graphite_loaded", "1")
 }
 
 func doWork() {
     // this will work just fine, regardless of if you're working with a graphite
     // nop or not
-    Graphite.SimpleSend("stats.doing_work", 1)
+    Graphite.SimpleSend("stats.doing_work", "1")
 }
 ```
 
