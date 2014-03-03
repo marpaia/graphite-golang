@@ -18,13 +18,6 @@ type Graphite struct {
 	nop     bool
 }
 
-// Metric is a struct that defines the relevant properties of a graphite metric
-type Metric struct {
-	Name      string
-	Value     string
-	Timestamp int64
-}
-
 // defaultTimeout is the default number of seconds that we're willing to wait
 // before forcing the connection establishment to fail
 const defaultTimeout = 5
