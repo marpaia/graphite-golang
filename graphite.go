@@ -83,7 +83,7 @@ func (graphite *Graphite) sendMetric(metric Metric) error {
 			return err
 		}
 	} else {
-		log.Printf("Graphite: %s %s %d\n", metric.Name, metric.Value, metric.Timestamp)
+		log.Printf("Graphite: %s\n", metric)
 	}
 
 	return nil
