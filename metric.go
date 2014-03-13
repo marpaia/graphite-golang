@@ -12,6 +12,14 @@ type Metric struct {
 	Timestamp int64
 }
 
+func NewMetric(name, value string, timestamp int64) Metric {
+	return Metric{
+		Name:      name,
+		Value:     value,
+		Timestamp: timestamp,
+	}
+}
+
 func (metric Metric) String() string {
 	return fmt.Sprintf(
 		"%s %s %s",
