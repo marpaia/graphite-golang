@@ -65,7 +65,7 @@ func (graphite *Graphite) SendMetric(metric Metric) error {
 // The SimpleSend method can be used to just pass a metric name and value and
 // have it be sent to the Graphite host with the current timestamp
 func (graphite *Graphite) SimpleSend(stat string, value string) error {
-	metric := Metric{Name: stat, Value: value, Timestamp: time.Now().Unix()}
+	metric := NewMetric(stat, value, time.Now().Unix())
 	err := graphite.sendMetric(metric)
 	if err != nil {
 		return err
