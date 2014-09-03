@@ -14,6 +14,7 @@ type Graphite struct {
 	Host    string
 	Port    int
 	Timeout time.Duration
+	Prefix	string
 	conn    net.Conn
 	nop     bool
 }
@@ -55,9 +56,6 @@ func (graphite *Graphite) Connect() error {
 // Given a Metric struct, the SendMetric method sends the supplied metric to the
 // Graphite connection that the method is called upon
 func (graphite *Graphite) SendMetric(metric Metric) error {
-	if metric.Timestamp == 0 {
-		metric.Timestamp = time.Now().Unix()
-	}
 	metrics := make([]Metric, 1)
 	metrics[0] = metric
 
@@ -67,12 +65,6 @@ func (graphite *Graphite) SendMetric(metric Metric) error {
 // Given a slice of Metrics, the SendMetrics method sends the metrics, as a
 // batch, to the Graphite connection that the method is called upon
 func (graphite *Graphite) SendMetrics(metrics []Metric) error {
-	for _, metric := range metrics {
-		if metric.Timestamp == 0 {
-			metric.Timestamp = time.Now().Unix()
-		}
-	}
-
 	return graphite.sendMetrics(metrics)
 }
 
@@ -86,10 +78,19 @@ func (graphite *Graphite) sendMetrics(metrics []Metric) error {
 			if metric == zeroed_metric {
 				continue // ignore unintialized metrics
 			}
-			buf.WriteString(fmt.Sprintf("%s %s %d\n", metric.Name, metric.Value, metric.Timestamp))
+			if metric.Timestamp == 0 {
+				metric.Timestamp = time.Now().Unix()
+			}
+			metric_name := ""
+			if graphite.Prefix != "" {
+				metric_name = fmt.Sprintf("%s.%s", graphite.Prefix, metric.Name)
+			} else {
+				metric_name = metric.Name
+			}
+			buf.WriteString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
 		}
 		_, err := graphite.conn.Write(buf.Bytes())
-		fmt.Print("Sent msg:", buf.String(), "'")
+		//fmt.Print("Sent msg:", buf.String(), "'")
 		if err != nil {
 			return err
 		}
