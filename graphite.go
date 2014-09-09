@@ -27,9 +27,8 @@ const defaultTimeout = 5
 func (graphite *Graphite) IsNop() bool {
 	if graphite.nop {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 // Given a Graphite struct, Connect populates the Graphite.conn field with an
