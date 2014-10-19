@@ -1,7 +1,8 @@
 graphite-golang
 ===============
 
-This is a lightweight Graphite API client written in Go.
+This is a lightweight Graphite API client written in Go that implements Carbon
+submission functionality.
 
 ## Installation
 
