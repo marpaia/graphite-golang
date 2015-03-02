@@ -35,6 +35,10 @@ func (graphite *Graphite) IsNop() bool {
 // appropriate TCP connection
 func (graphite *Graphite) Connect() error {
 	if !graphite.IsNop() {
+		if graphite.conn != nil {
+			graphite.conn.Close()
+		}
+
 		address := fmt.Sprintf("%s:%d", graphite.Host, graphite.Port)
 
 		if graphite.Timeout == 0 {
