@@ -56,6 +56,13 @@ func (graphite *Graphite) Connect() error {
 	return nil
 }
 
+// Given a Graphite struct, Disconnect closes the Graphite.conn field
+func (graphite *Graphite) Disconnect() error {
+	err := graphite.conn.Close()
+	graphite.conn = nil
+	return err
+}
+
 // Given a Metric struct, the SendMetric method sends the supplied metric to the
 // Graphite connection that the method is called upon
 func (graphite *Graphite) SendMetric(metric Metric) error {
