@@ -35,6 +35,10 @@ func (graphite *Graphite) IsNop() bool {
 // appropriate TCP connection
 func (graphite *Graphite) Connect() error {
 	if !graphite.IsNop() {
+		if graphite.conn != nil {
+			graphite.conn.Close()
+		}
+
 		address := fmt.Sprintf("%s:%d", graphite.Host, graphite.Port)
 
 		if graphite.Timeout == 0 {
@@ -50,6 +54,13 @@ func (graphite *Graphite) Connect() error {
 	}
 
 	return nil
+}
+
+// Given a Graphite struct, Disconnect closes the Graphite.conn field
+func (graphite *Graphite) Disconnect() error {
+	err := graphite.conn.Close()
+	graphite.conn = nil
+	return err
 }
 
 // Given a Metric struct, the SendMetric method sends the supplied metric to the
