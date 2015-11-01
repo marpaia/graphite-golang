@@ -11,12 +11,13 @@ import (
 // Graphite is a struct that defines the relevant properties of a graphite
 // connection
 type Graphite struct {
-	Host    string
-	Port    int
-	Timeout time.Duration
-	Prefix	string
-	conn    net.Conn
-	nop     bool
+	Host     string
+	Port     int
+	Protocol string
+	Timeout  time.Duration
+	Prefix   string
+	conn     net.Conn
+	nop      bool
 }
 
 // defaultTimeout is the default number of seconds that we're willing to wait
@@ -45,7 +46,7 @@ func (graphite *Graphite) Connect() error {
 			graphite.Timeout = defaultTimeout * time.Second
 		}
 
-		conn, err := net.DialTimeout("tcp", address, graphite.Timeout)
+		conn, err := net.DialTimeout(graphite.Protocol, address, graphite.Timeout)
 		if err != nil {
 			return err
 		}
@@ -125,9 +126,19 @@ func (graphite *Graphite) SimpleSend(stat string, value string) error {
 }
 
 // NewGraphiteHost is a factory method that's used to create a new Graphite
-// connection given a hostname and a port number
 func NewGraphite(host string, port int) (*Graphite, error) {
-	Graphite := &Graphite{Host: host, Port: port}
+	Graphite := &Graphite{Host: host, Port: port, Protocol: "tcp"}
+	err := Graphite.Connect()
+	if err != nil {
+		return nil, err
+	}
+
+	return Graphite, nil
+}
+
+// When a UDP connection to Graphite is required
+func NewGraphiteUDP(host string, port int) (*Graphite, error) {
+	Graphite := &Graphite{Host: host, Port: port, Protocol: "udp"}
 	err := Graphite.Connect()
 	if err != nil {
 		return nil, err
