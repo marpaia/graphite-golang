@@ -20,6 +20,17 @@ func TestNewGraphite(t *testing.T) {
 	}
 }
 
+func TestNewGraphiteUDP(t *testing.T) {
+	gh, err := NewGraphiteUDP(graphiteHost, graphitePort)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if _, ok := gh.conn.(*net.UDPConn); !ok {
+		t.Error("GraphiteHost.conn is not a UDP connection")
+	}
+}
+
 // Uncomment the following method to test sending an actual metric to graphite
 //
 //func TestSendMetric(t *testing.T) {
