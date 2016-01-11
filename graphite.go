@@ -125,9 +125,20 @@ func (graphite *Graphite) SimpleSend(stat string, value string) error {
 	return nil
 }
 
-// NewGraphiteHost is a factory method that's used to create a new Graphite
+// NewGraphite is a factory method that's used to create a new Graphite
 func NewGraphite(host string, port int) (*Graphite, error) {
 	Graphite := &Graphite{Host: host, Port: port, Protocol: "tcp"}
+	err := Graphite.Connect()
+	if err != nil {
+		return nil, err
+	}
+
+	return Graphite, nil
+}
+
+// NewGraphiteWithMetricPrefix is a factory method that's used to create a new Graphite with a metric prefix
+func NewGraphiteWithMetricPrefix(host string, port int, prefix string) (*Graphite, error) {
+	Graphite := &Graphite{Host: host, Port: port, Protocol: "tcp", Prefix: prefix}
 	err := Graphite.Connect()
 	if err != nil {
 		return nil, err
