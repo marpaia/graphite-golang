@@ -20,6 +20,18 @@ func TestNewGraphite(t *testing.T) {
 	}
 }
 
+func TestNewGraphiteWithMetricPrefix(t *testing.T) {
+	prefix := "test"
+	gh, err := NewGraphiteWithMetricPrefix(graphiteHost, graphitePort, prefix)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if _, ok := gh.conn.(*net.TCPConn); !ok {
+		t.Error("GraphiteHost.conn is not a TCP connection")
+	}
+}
+
 func TestNewGraphiteUDP(t *testing.T) {
 	gh, err := NewGraphiteUDP(graphiteHost, graphitePort)
 	if err != nil {
