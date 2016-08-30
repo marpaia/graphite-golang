@@ -127,35 +127,17 @@ func (graphite *Graphite) SimpleSend(stat string, value string) error {
 
 // NewGraphite is a factory method that's used to create a new Graphite
 func NewGraphite(host string, port int) (*Graphite, error) {
-	Graphite := &Graphite{Host: host, Port: port, Protocol: "tcp"}
-	err := Graphite.Connect()
-	if err != nil {
-		return nil, err
-	}
-
-	return Graphite, nil
+	return GraphiteFactory("tcp", host, port, "")
 }
 
 // NewGraphiteWithMetricPrefix is a factory method that's used to create a new Graphite with a metric prefix
 func NewGraphiteWithMetricPrefix(host string, port int, prefix string) (*Graphite, error) {
-	Graphite := &Graphite{Host: host, Port: port, Protocol: "tcp", Prefix: prefix}
-	err := Graphite.Connect()
-	if err != nil {
-		return nil, err
-	}
-
-	return Graphite, nil
+	return GraphiteFactory("tcp", host, port, prefix)
 }
 
 // When a UDP connection to Graphite is required
 func NewGraphiteUDP(host string, port int) (*Graphite, error) {
-	Graphite := &Graphite{Host: host, Port: port, Protocol: "udp"}
-	err := Graphite.Connect()
-	if err != nil {
-		return nil, err
-	}
-
-	return Graphite, nil
+	return GraphiteFactory("udp", host, port, "")
 }
 
 // NewGraphiteNop is a factory method that returns a Graphite struct but will
@@ -163,6 +145,26 @@ func NewGraphiteUDP(host string, port int) (*Graphite, error) {
 // log. This is useful if you want to use Graphite in a project but don't want
 // to make Graphite a requirement for the project.
 func NewGraphiteNop(host string, port int) *Graphite {
-	graphiteNop := &Graphite{Host: host, Port: port, nop: true}
+	graphiteNop, _ := GraphiteFactory("nop", host, port, "")
 	return graphiteNop
+}
+
+func GraphiteFactory(protocol string, host string, port int, prefix string) (*Graphite, error) {
+	var graphite *Graphite
+
+	switch protocol {
+	case "tcp":
+		graphite = &Graphite{Host: host, Port: port, Protocol: "tcp", Prefix: prefix}
+	case "udp":
+		graphite = &Graphite{Host: host, Port: port, Protocol: "udp"}
+	case "nop":
+		graphite = &Graphite{Host: host, Port: port, nop: true}
+	}
+
+	err := graphite.Connect()
+	if err != nil {
+		return nil, err
+	}
+
+	return graphite, nil
 }
