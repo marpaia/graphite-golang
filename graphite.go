@@ -98,12 +98,19 @@ func (graphite *Graphite) sendMetrics(metrics []Metric) error {
 			} else {
 				metric_name = metric.Name
 			}
+			if graphite.Protocol == "udp" {
+				bufString := bytes.NewBufferString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
+				graphite.conn.Write(bufString.Bytes())
+				continue
+			}
 			buf.WriteString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
 		}
-		_, err := graphite.conn.Write(buf.Bytes())
-		//fmt.Print("Sent msg:", buf.String(), "'")
-		if err != nil {
-			return err
+		if graphite.Protocol == "tcp" {
+			_, err := graphite.conn.Write(buf.Bytes())
+			//fmt.Print("Sent msg:", buf.String(), "'")
+			if err != nil {
+				return err
+			}
 		}
 	} else {
 		for _, metric := range metrics {
