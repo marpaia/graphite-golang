@@ -82,39 +82,39 @@ func (graphite *Graphite) SendMetrics(metrics []Metric) error {
 // sendMetrics is an internal function that is used to write to the TCP
 // connection in order to communicate metrics to the remote Graphite host
 func (graphite *Graphite) sendMetrics(metrics []Metric) error {
-	zeroed_metric := Metric{} // ignore unintialized metrics
-	if !graphite.IsNop() {
-		buf := bytes.NewBufferString("")
-		for _, metric := range metrics {
-			if metric == zeroed_metric {
-				continue // ignore unintialized metrics
-			}
-			if metric.Timestamp == 0 {
-				metric.Timestamp = time.Now().Unix()
-			}
-			metric_name := ""
-			if graphite.Prefix != "" {
-				metric_name = fmt.Sprintf("%s.%s", graphite.Prefix, metric.Name)
-			} else {
-				metric_name = metric.Name
-			}
-			if graphite.Protocol == "udp" {
-				bufString := bytes.NewBufferString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
-				graphite.conn.Write(bufString.Bytes())
-				continue
-			}
-			buf.WriteString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
-		}
-		if graphite.Protocol == "tcp" {
-			_, err := graphite.conn.Write(buf.Bytes())
-			//fmt.Print("Sent msg:", buf.String(), "'")
-			if err != nil {
-				return err
-			}
-		}
-	} else {
+	if graphite.IsNop() {
 		for _, metric := range metrics {
 			log.Printf("Graphite: %s\n", metric)
+		}
+		return nil
+	}
+	zeroed_metric := Metric{} // ignore unintialized metrics
+	buf := bytes.NewBufferString("")
+	for _, metric := range metrics {
+		if metric == zeroed_metric {
+			continue // ignore unintialized metrics
+		}
+		if metric.Timestamp == 0 {
+			metric.Timestamp = time.Now().Unix()
+		}
+		metric_name := ""
+		if graphite.Prefix != "" {
+			metric_name = fmt.Sprintf("%s.%s", graphite.Prefix, metric.Name)
+		} else {
+			metric_name = metric.Name
+		}
+		if graphite.Protocol == "udp" {
+			bufString := bytes.NewBufferString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
+			graphite.conn.Write(bufString.Bytes())
+			continue
+		}
+		buf.WriteString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
+	}
+	if graphite.Protocol == "tcp" {
+		_, err := graphite.conn.Write(buf.Bytes())
+		//fmt.Print("Sent msg:", buf.String(), "'")
+		if err != nil {
+			return err
 		}
 	}
 	return nil
