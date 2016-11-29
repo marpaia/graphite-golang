@@ -156,7 +156,7 @@ func GraphiteFactory(protocol string, host string, port int, prefix string) (*Gr
 	case "tcp":
 		graphite = &Graphite{Host: host, Port: port, Protocol: "tcp", Prefix: prefix}
 	case "udp":
-		graphite = &Graphite{Host: host, Port: port, Protocol: "udp"}
+		graphite = &Graphite{Host: host, Port: port, Protocol: "udp", Prefix: prefix}
 	case "nop":
 		graphite = &Graphite{Host: host, Port: port, nop: true}
 	}
