@@ -2,7 +2,8 @@ graphite-golang
 ===============
 
 This is a lightweight Graphite API client written in Go that implements Carbon
-submission functionality.
+submission functionality. I wrote this a long time ago as a dependency for a side
+project a long time ago. You shouldn't rely on this for any production use-case.
 
 ## Installation
 
@@ -56,14 +57,3 @@ func doWork() {
     Graphite.SimpleSend("stats.doing_work", "1")
 }
 ```
-
-## Contributing
-
-Please contribute and help improve this project!
-
-- Fork the repo
-- Make sure the tests pass
-- Improve the code
-- Make sure your feature has test coverage
-- Make sure the tests pass
-- Submit a pull request
