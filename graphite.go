@@ -46,7 +46,19 @@ func (graphite *Graphite) Connect() error {
 			graphite.Timeout = defaultTimeout * time.Second
 		}
 
-		conn, err := net.DialTimeout(graphite.Protocol, address, graphite.Timeout)
+		var err error
+		var conn net.Conn
+
+		if graphite.Protocol == "udp" {
+			udpAddr, err := net.ResolveUDPAddr("udp", address)
+			if err != nil {
+				return err
+			}
+			conn, err = net.DialUDP(graphite.Protocol, nil, udpAddr)
+		} else {
+			conn, err = net.DialTimeout(graphite.Protocol, address, graphite.Timeout)
+		}
+
 		if err != nil {
 			return err
 		}
@@ -104,8 +116,7 @@ func (graphite *Graphite) sendMetrics(metrics []Metric) error {
 			metric_name = metric.Name
 		}
 		if graphite.Protocol == "udp" {
-			bufString := bytes.NewBufferString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
-			graphite.conn.Write(bufString.Bytes())
+			fmt.Fprintf(graphite.conn, "%s %s %d\n", metric_name, metric.Value, metric.Timestamp)
 			continue
 		}
 		buf.WriteString(fmt.Sprintf("%s %s %d\n", metric_name, metric.Value, metric.Timestamp))
