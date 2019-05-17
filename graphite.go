@@ -18,6 +18,7 @@ type Graphite struct {
 	Prefix   string
 	conn     net.Conn
 	nop      bool
+	DisableLog bool
 }
 
 // defaultTimeout is the default number of seconds that we're willing to wait
@@ -95,8 +96,10 @@ func (graphite *Graphite) SendMetrics(metrics []Metric) error {
 // connection in order to communicate metrics to the remote Graphite host
 func (graphite *Graphite) sendMetrics(metrics []Metric) error {
 	if graphite.IsNop() {
-		for _, metric := range metrics {
-			log.Printf("Graphite: %s\n", metric)
+		if !graphite.DisableLog {
+			for _, metric := range metrics {
+				log.Printf("Graphite: %s\n", metric)
+			}
 		}
 		return nil
 	}
